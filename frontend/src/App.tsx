@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageItem, ChatResponse } from './types';
+import { MessageItem, ChatResponse, SavedSession } from './types';
 import { Sidebar } from './components/Sidebar';
 import { TopNavbar } from './components/TopNavbar';
 import { ChatWindow } from './components/ChatWindow';
@@ -29,8 +29,15 @@ function formatErrorDetail(detail: any): string {
 }
 
 export const App: React.FC = () => {
-  // A new session_id is generated on EVERY page load
-  const [sessionId] = useState<string>(() => `s-${Math.random().toString(36).substring(2, 10)}`);
+  const [sessionId, setSessionId] = useState<string>(() => `s-${Math.random().toString(36).substring(2, 10)}`);
+  const [sessions, setSessions] = useState<SavedSession[]>(() => {
+    try {
+      const stored = localStorage.getItem('lyftr_saved_sessions');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
   const [systemPrompt, setSystemPrompt] = useState<string>('');
   const [simulationHeader, setSimulationHeader] = useState<string>('');
   const [messages, setMessages] = useState<MessageItem[]>([]);
@@ -118,6 +125,23 @@ export const App: React.FC = () => {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+
+      // Save session to history list if new
+      setSessions((prev) => {
+        if (!prev.some((s) => s.id === sessionId)) {
+          const newSession: SavedSession = {
+            id: sessionId,
+            title: content.trim().slice(0, 28) + (content.length > 28 ? '...' : ''),
+            updatedAt: new Date().toISOString(),
+          };
+          const updated = [newSession, ...prev];
+          try {
+            localStorage.setItem('lyftr_saved_sessions', JSON.stringify(updated));
+          } catch {}
+          return updated;
+        }
+        return prev;
+      });
     } catch (err: any) {
       const networkError: MessageItem = {
         id: `err-${Date.now()}`,
@@ -132,7 +156,58 @@ export const App: React.FC = () => {
   };
 
   const handleNewSession = () => {
-    window.location.reload();
+    const newId = `s-${Math.random().toString(36).substring(2, 10)}`;
+    setSessionId(newId);
+    setMessages([]);
+  };
+
+  const handleSelectSession = async (targetId: string) => {
+    if (targetId === sessionId) return;
+    setIsLoading(true);
+    setSessionId(targetId);
+    try {
+      const res = await fetch(`${API_BASE_URL}/sessions/${targetId}/messages`);
+      if (res.ok) {
+        const data = await res.json();
+        const loaded: MessageItem[] = (data.messages || []).map((m: any, idx: number) => ({
+          id: `loaded-${targetId}-${idx}`,
+          role: m.role,
+          content: m.content,
+          metadata: m.metadata
+            ? {
+                resolution_source: m.metadata.resolution_source,
+                model: 'gemini/gemini-3.5-flash',
+                latency_ms: 0,
+                input_tokens: m.metadata.input_tokens || 0,
+                output_tokens: m.metadata.output_tokens || 0,
+                fallback_attempts: 0,
+              }
+            : undefined,
+          timestamp: new Date().toISOString(),
+        }));
+        setMessages(loaded);
+      } else {
+        setMessages([]);
+      }
+    } catch {
+      setMessages([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteSession = (targetId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSessions((prev) => {
+      const updated = prev.filter((s) => s.id !== targetId);
+      try {
+        localStorage.setItem('lyftr_saved_sessions', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+    if (sessionId === targetId) {
+      handleNewSession();
+    }
   };
 
   return (
@@ -143,6 +218,9 @@ export const App: React.FC = () => {
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
         onNewChat={handleNewSession}
         sessionId={sessionId}
+        sessions={sessions}
+        onSelectSession={handleSelectSession}
+        onDeleteSession={handleDeleteSession}
         keysCount={healthStatus?.keys || 2}
       />
 

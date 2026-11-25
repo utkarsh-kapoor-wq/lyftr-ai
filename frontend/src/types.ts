@@ -23,3 +23,9 @@ export interface ChatResponse {
   reply: string;
   metadata: ChatMetadata;
 }
+
+export interface SavedSession {
+  id: string;
+  title: string;
+  updatedAt: string;
+}
