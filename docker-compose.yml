@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:////data/app.db
+      - LLM_API_KEYS=${LLM_API_KEYS:-key_1,key_2}
+      - LLM_MODEL=${LLM_MODEL:-gemini/gemini-2.0-flash}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      - ENABLE_FAILURE_SIMULATION=${ENABLE_FAILURE_SIMULATION:-true}
+      - DEFAULT_SYSTEM_PROMPT=${DEFAULT_SYSTEM_PROMPT:-You are a helpful assistant.}
+    volumes:
+      - app-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/health\")'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  app-data:
+    name: lyftr-app-data
