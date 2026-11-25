@@ -30,8 +30,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 
   if (isUser) {
     return (
-      <div className="w-full max-w-3xl mx-auto py-4 px-4 flex justify-end">
-        <div className="max-w-[80%] bg-zinc-800 text-zinc-100 rounded-2xl rounded-tr-sm px-4 py-3 text-sm leading-relaxed shadow-sm whitespace-pre-wrap font-sans">
+      <div className="w-full max-w-3xl mx-auto py-3 px-4 flex justify-end">
+        <div className="max-w-[80%] bg-gradient-to-r from-indigo-950/70 to-zinc-900/90 border border-indigo-700/50 text-zinc-100 rounded-2xl rounded-tr-sm px-4 py-3 text-sm leading-relaxed shadow-md whitespace-pre-wrap font-sans">
           {message.content}
         </div>
       </div>
@@ -43,15 +43,15 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const isCache = meta?.resolution_source === 'LLM_CACHE';
 
   return (
-    <div className="w-full max-w-3xl mx-auto py-4 px-4" data-testid="assistant-message">
-      <div className="flex gap-4">
+    <div className="w-full max-w-3xl mx-auto py-3 px-4" data-testid="assistant-message">
+      <div className="flex gap-3.5">
         {/* Assistant Avatar */}
-        <div className="w-7 h-7 rounded-xl bg-zinc-800 border border-zinc-700/80 flex items-center justify-center flex-shrink-0 text-cyan-400 shadow-sm mt-0.5">
+        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 border border-indigo-500/50 flex items-center justify-center flex-shrink-0 text-white shadow-md shadow-indigo-500/20 mt-0.5">
           <Bot className="w-4 h-4" />
         </div>
 
         {/* Content & Metadata */}
-        <div className="flex-1 space-y-3 min-w-0">
+        <div className="flex-1 space-y-2.5 min-w-0 bg-[#12131c]/60 p-4 rounded-2xl border border-zinc-800/80">
           <div className="text-sm text-zinc-100 leading-relaxed whitespace-pre-wrap font-sans">
             {message.content}
           </div>

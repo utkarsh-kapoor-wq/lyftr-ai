@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sliders, ShieldAlert, Copy, Check } from 'lucide-react';
+import { Sliders, ShieldAlert, Copy, Check, Zap } from 'lucide-react';
 
 interface TopNavbarProps {
   modelName: string;
@@ -29,41 +29,51 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   };
 
   return (
-    <header className="h-14 border-b border-zinc-800/80 px-4 flex items-center justify-between bg-zinc-950/70 backdrop-blur z-10 flex-shrink-0">
+    <header className="h-16 border-b border-zinc-800/80 px-5 flex items-center justify-between bg-[#0a0b10]/90 backdrop-blur-xl z-10 flex-shrink-0">
       {/* Brand & Model */}
-      <div className="flex items-center gap-2.5">
-        <span className="text-sm font-bold text-zinc-100 tracking-tight">
-          Lyftr Gateway
-        </span>
-        <span className="px-2 py-0.5 rounded-full bg-emerald-950/70 text-emerald-400 border border-emerald-800/60 font-mono text-[11px] font-medium">
-          {modelName}
-        </span>
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
+          <Zap className="w-4 h-4 fill-white" />
+        </div>
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-white tracking-tight">
+              Pulse AI
+            </span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 font-medium">
+              Enterprise
+            </span>
+          </div>
+          <span className="text-[11px] font-mono text-zinc-400">
+            {modelName}
+          </span>
+        </div>
       </div>
 
       {/* Action Controls */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2.5">
         {/* System Prompt Modal Trigger */}
         <button
           onClick={onOpenSystemPrompt}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all duration-150 ${
             hasCustomSystemPrompt
-              ? 'bg-cyan-950/60 text-cyan-300 border-cyan-700/60'
-              : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border-zinc-800'
+              ? 'bg-indigo-950/70 text-indigo-300 border-indigo-600/70 shadow-sm shadow-indigo-500/20'
+              : 'bg-[#13141c] hover:bg-[#1c1d27] text-zinc-300 border-zinc-800'
           }`}
           title="Configure System Prompt"
         >
-          <Sliders className="w-3.5 h-3.5 text-cyan-400" />
+          <Sliders className="w-3.5 h-3.5 text-indigo-400" />
           <span className="hidden sm:inline">System Prompt</span>
-          {hasCustomSystemPrompt && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />}
+          {hasCustomSystemPrompt && <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping" />}
         </button>
 
         {/* Simulate Failover Modal Trigger */}
         <button
           onClick={onOpenFailover}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all duration-150 ${
             hasActiveSimulation
-              ? 'bg-amber-950/60 text-amber-300 border-amber-700/60'
-              : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border-zinc-800'
+              ? 'bg-amber-950/80 text-amber-300 border-amber-600/80 shadow-sm shadow-amber-500/20 animate-pulse'
+              : 'bg-[#13141c] hover:bg-[#1c1d27] text-zinc-300 border-zinc-800'
           }`}
           title="Simulate Failover"
         >
@@ -73,15 +83,18 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
         </button>
 
         {/* Health status */}
-        <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-900/80 border border-zinc-800 text-xs font-medium text-zinc-300">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>Ready ({keysCount} keys)</span>
+        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#13141c] border border-zinc-800/90 text-xs font-medium text-zinc-300">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span className="text-zinc-300">Active ({keysCount} keys)</span>
         </div>
 
         {/* Session ID Pill with Copy */}
         <button
           onClick={handleCopySession}
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 font-mono text-[11px] text-zinc-400 hover:text-zinc-200 transition"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#13141c] hover:bg-[#1c1d27] border border-zinc-800 font-mono text-[11px] text-zinc-400 hover:text-zinc-200 transition"
           title="Click to copy Session ID"
         >
           <span>session: {sessionId.substring(0, 10)}...</span>

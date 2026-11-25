@@ -42,7 +42,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
   return (
     <div className="w-full max-w-3xl mx-auto px-4 pb-4">
       {/* Capsule Box */}
-      <div className="bg-zinc-900/90 backdrop-blur-md border border-zinc-800 rounded-2xl p-2 shadow-2xl focus-within:border-zinc-700 transition">
+      <div className="bg-[#12131a]/95 backdrop-blur-xl border border-zinc-800/90 rounded-2xl p-2 shadow-2xl focus-within:border-indigo-500/60 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all duration-200">
         <div className="flex items-end gap-2">
           <textarea
             ref={textareaRef}
@@ -52,7 +52,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
             onKeyDown={handleKeyDown}
             disabled={isLoading}
             rows={1}
-            placeholder="Message Lyftr Gateway..."
+            placeholder="Ask a question, analyze system designs, or test failover..."
             className="flex-1 bg-transparent border-0 resize-none px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none disabled:opacity-50 max-h-44 leading-relaxed font-sans"
           />
           <button
@@ -60,10 +60,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
             data-testid="send-button"
             onClick={handleSend}
             disabled={isLoading || !input.trim()}
-            className="w-8 h-8 rounded-xl bg-zinc-100 text-zinc-950 hover:bg-white focus:outline-none disabled:opacity-20 disabled:hover:bg-zinc-100 transition-all flex items-center justify-center flex-shrink-0 shadow-sm"
+            className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-violet-600 text-white hover:from-indigo-400 hover:to-violet-500 focus:outline-none disabled:opacity-20 disabled:hover:from-indigo-500 disabled:hover:to-violet-600 transition-all flex items-center justify-center flex-shrink-0 shadow-md shadow-indigo-500/25"
           >
             {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin text-zinc-900" />
+              <Loader2 className="w-4 h-4 animate-spin text-white" />
             ) : (
               <ArrowUp className="w-4 h-4 stroke-[2.5]" />
             )}
@@ -71,8 +71,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
         </div>
       </div>
 
-      <div className="text-[11px] text-zinc-400 text-center mt-2 font-sans">
-        Lyftr Gateway can make mistakes. Verify important failover and token telemetry.
+      <div className="text-[11px] text-zinc-500 text-center mt-2 font-sans flex items-center justify-center gap-2">
+        <span>Pulse AI Engine</span>
+        <span>•</span>
+        <span>Multi-Key Failover</span>
+        <span>•</span>
+        <span>Sub-ms Prompt Cache</span>
       </div>
     </div>
   );
