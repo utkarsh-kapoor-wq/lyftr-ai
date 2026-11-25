@@ -15,7 +15,7 @@ class Settings(BaseSettings):
         description="Comma-separated API keys, >=2 keys required."
     )
     LLM_MODEL: str = Field(
-        default="gemini/gemini-2.0-flash",
+        default="gemini/gemini-3.5-flash",
         description="Default LiteLLM model identifier."
     )
     DATABASE_URL: str = Field(
