@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Loader2 } from 'lucide-react';
+import { ArrowUp, Loader2 } from 'lucide-react';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -36,36 +36,43 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     e.target.style.height = 'auto';
-    e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+    e.target.style.height = `${Math.min(e.target.scrollHeight, 180)}px`;
   };
 
   return (
-    <div className="bg-slate-800/90 backdrop-blur border border-slate-700/80 rounded-2xl p-2 shadow-lg">
-      <div className="flex items-end gap-2">
-        <textarea
-          ref={textareaRef}
-          data-testid="chat-input"
-          value={input}
-          onChange={handleInput}
-          onKeyDown={handleKeyDown}
-          disabled={isLoading}
-          rows={1}
-          placeholder="Type your message... (Enter to send, Shift+Enter for newline)"
-          className="flex-1 bg-transparent border-0 resize-none px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none disabled:opacity-50 max-h-40 leading-relaxed"
-        />
-        <button
-          type="button"
-          data-testid="send-button"
-          onClick={handleSend}
-          disabled={isLoading || !input.trim()}
-          className="p-2.5 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:opacity-40 disabled:hover:bg-indigo-600 transition-all shadow-md flex items-center justify-center flex-shrink-0"
-        >
-          {isLoading ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            <Send className="w-5 h-5" />
-          )}
-        </button>
+    <div className="w-full max-w-3xl mx-auto px-4 pb-4">
+      {/* Capsule Box */}
+      <div className="bg-zinc-900/90 backdrop-blur-md border border-zinc-800 rounded-2xl p-2 shadow-2xl focus-within:border-zinc-700 transition">
+        <div className="flex items-end gap-2">
+          <textarea
+            ref={textareaRef}
+            data-testid="chat-input"
+            value={input}
+            onChange={handleInput}
+            onKeyDown={handleKeyDown}
+            disabled={isLoading}
+            rows={1}
+            placeholder="Message Lyftr Gateway..."
+            className="flex-1 bg-transparent border-0 resize-none px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none disabled:opacity-50 max-h-44 leading-relaxed font-sans"
+          />
+          <button
+            type="button"
+            data-testid="send-button"
+            onClick={handleSend}
+            disabled={isLoading || !input.trim()}
+            className="w-8 h-8 rounded-xl bg-zinc-100 text-zinc-950 hover:bg-white focus:outline-none disabled:opacity-20 disabled:hover:bg-zinc-100 transition-all flex items-center justify-center flex-shrink-0 shadow-sm"
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin text-zinc-900" />
+            ) : (
+              <ArrowUp className="w-4 h-4 stroke-[2.5]" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      <div className="text-[11px] text-zinc-400 text-center mt-2 font-sans">
+        Lyftr Gateway can make mistakes. Verify important failover and token telemetry.
       </div>
     </div>
   );
