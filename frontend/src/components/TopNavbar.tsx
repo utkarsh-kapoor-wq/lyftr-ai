@@ -30,24 +30,14 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
 
   return (
     <header className="h-16 border-b border-zinc-800/80 px-5 flex items-center justify-between bg-[#0a0b10]/90 backdrop-blur-xl z-10 flex-shrink-0">
-      {/* Brand & Model */}
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
+      {/* Model Indicator */}
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
           <Zap className="w-4 h-4 fill-white" />
         </div>
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-white tracking-tight">
-              Pulse AI
-            </span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 font-medium">
-              Enterprise
-            </span>
-          </div>
-          <span className="text-[11px] font-mono text-zinc-400">
-            {modelName}
-          </span>
-        </div>
+        <span className="px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-xs font-mono font-medium text-zinc-300">
+          {modelName}
+        </span>
       </div>
 
       {/* Action Controls */}

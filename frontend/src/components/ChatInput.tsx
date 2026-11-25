@@ -72,11 +72,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
       </div>
 
       <div className="text-[11px] text-zinc-500 text-center mt-2 font-sans flex items-center justify-center gap-2">
-        <span>Pulse AI Engine</span>
-        <span>•</span>
         <span>Multi-Key Failover</span>
         <span>•</span>
-        <span>Sub-ms Prompt Cache</span>
+        <span>In-Memory Cache</span>
+        <span>•</span>
+        <span>Session State</span>
       </div>
     </div>
   );

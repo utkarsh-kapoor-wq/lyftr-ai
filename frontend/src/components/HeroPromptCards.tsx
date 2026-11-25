@@ -49,10 +49,10 @@ export const HeroPromptCards: React.FC<HeroPromptCardsProps> = ({ onSelectPrompt
       </div>
 
       <h1 className="text-3xl font-extrabold tracking-tight text-white mb-3">
-        Pulse AI Engine
+        What would you like to explore?
       </h1>
       <p className="text-sm text-zinc-400 max-w-lg mb-10 leading-relaxed font-sans">
-        Enterprise multi-turn chat orchestrating resilient Gemini key pools, sub-millisecond LiteLLM prompt caching, and atomic SQLite state.
+        Ask questions, analyze complex problems, or select a prompt below to get started.
       </p>
 
       {/* 4 Brand New Unique Cards */}
