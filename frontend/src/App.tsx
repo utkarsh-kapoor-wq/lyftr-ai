@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { MessageItem, ChatResponse } from './types';
-import { SystemPromptInput } from './components/SystemPromptInput';
-import { FailoverTester } from './components/FailoverTester';
+import { Sidebar } from './components/Sidebar';
+import { TopNavbar } from './components/TopNavbar';
 import { ChatWindow } from './components/ChatWindow';
 import { ChatInput } from './components/ChatInput';
-import { MessageSquare, RefreshCw, Activity } from 'lucide-react';
+import { SystemPromptModal } from './components/SystemPromptModal';
+import { FailoverModal } from './components/FailoverModal';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -35,6 +36,11 @@ export const App: React.FC = () => {
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [healthStatus, setHealthStatus] = useState<{ status: string; keys: number } | null>(null);
+
+  // UI Modals & Sidebar
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [isSystemPromptOpen, setIsSystemPromptOpen] = useState<boolean>(false);
+  const [isFailoverOpen, setIsFailoverOpen] = useState<boolean>(false);
 
   // Check backend health on mount
   useEffect(() => {
@@ -89,7 +95,7 @@ export const App: React.FC = () => {
             errorText = formatErrorDetail(errData.detail);
           }
         } catch {
-          errorText = await res.text() || errorText;
+          errorText = (await res.text()) || errorText;
         }
 
         const errorItem: MessageItem = {
@@ -130,70 +136,54 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-4xl mx-auto px-4 py-4">
-      {/* Header */}
-      <header className="flex items-center justify-between py-3 border-b border-slate-800 mb-3 flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md">
-            <MessageSquare className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              LiteLLM Multi-Turn Chat
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono font-normal border border-slate-700">
-                {sessionId}
-              </span>
-            </h1>
-            <p className="text-xs text-slate-400">
-              Provider failover, prompt caching & SQLite persistence
-            </p>
-          </div>
-        </div>
+    <div className="flex h-screen w-screen bg-[#09090b] text-zinc-100 overflow-hidden font-sans">
+      {/* Collapsible Left Sidebar */}
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+        onNewChat={handleNewSession}
+        sessionId={sessionId}
+        keysCount={healthStatus?.keys || 2}
+      />
 
-        <div className="flex items-center gap-2">
-          {healthStatus && (
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/60 font-mono">
-              <Activity
-                className={`w-3.5 h-3.5 ${
-                  healthStatus.status === 'ok' ? 'text-emerald-400' : 'text-amber-400'
-                }`}
-              />
-              <span>{healthStatus.status} ({healthStatus.keys} keys)</span>
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={handleNewSession}
-            title="Start new session"
-            className="flex items-center gap-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition shadow-sm"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>New Session</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Top Configuration Controls */}
-      <div className="flex-shrink-0">
-        <SystemPromptInput
-          value={systemPrompt}
-          onChange={setSystemPrompt}
-          disabled={isLoading}
+      {/* Main Chat Content Area */}
+      <div className="flex-1 flex flex-col h-full min-w-0 bg-[#09090b]">
+        {/* Top Navbar */}
+        <TopNavbar
+          modelName="gemini-3-flash"
+          keysCount={healthStatus?.keys || 2}
+          sessionId={sessionId}
+          onOpenSystemPrompt={() => setIsSystemPromptOpen(true)}
+          onOpenFailover={() => setIsFailoverOpen(true)}
+          hasCustomSystemPrompt={Boolean(systemPrompt.trim())}
+          hasActiveSimulation={Boolean(simulationHeader.trim())}
         />
-        <FailoverTester
-          value={simulationHeader}
-          onChange={setSimulationHeader}
-          disabled={isLoading}
+
+        {/* Scrollable Conversation or Hero Suggestions */}
+        <ChatWindow
+          messages={messages}
+          isLoading={isLoading}
+          onSelectPrompt={handleSendMessage}
         />
-      </div>
 
-      {/* Main Chat Feed */}
-      <ChatWindow messages={messages} isLoading={isLoading} />
-
-      {/* Chat Input */}
-      <div className="pt-2 flex-shrink-0">
+        {/* Floating Capsule Input */}
         <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
       </div>
+
+      {/* Configuration Modals */}
+      <SystemPromptModal
+        isOpen={isSystemPromptOpen}
+        onClose={() => setIsSystemPromptOpen(false)}
+        value={systemPrompt}
+        onChange={setSystemPrompt}
+      />
+
+      <FailoverModal
+        isOpen={isFailoverOpen}
+        onClose={() => setIsFailoverOpen(false)}
+        value={simulationHeader}
+        onChange={setSimulationHeader}
+      />
     </div>
   );
 };
