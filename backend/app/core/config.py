@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     @property
     def key_pool(self) -> Dict[str, str]:
         """Parse LLM_API_KEYS into key_1..key_n mapping."""
-        raw_keys = [k.strip() for k in self.LLM_API_KEYS.split(",") if k.strip()]
+        raw_keys = [k.strip().strip('"').strip("'") for k in self.LLM_API_KEYS.split(",") if k.strip()]
         return {f"key_{i + 1}": key for i, key in enumerate(raw_keys)}
 
     @property

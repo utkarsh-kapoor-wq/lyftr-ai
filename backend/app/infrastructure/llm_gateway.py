@@ -15,7 +15,8 @@ litellm.telemetry = False
 
 class LLMGateway:
     def __init__(self):
-        self.model = settings.LLM_MODEL
+        raw_model = settings.LLM_MODEL.strip().strip('"').strip("'").strip()
+        self.model = raw_model
         self.key_pool = settings.key_pool
 
     def compute_cache_key(self, model: str, messages: List[Dict[str, str]]) -> str:
@@ -151,7 +152,9 @@ class LLMGateway:
                 )
                 return reply, meta
 
-            except Exception:
+            except Exception as e:
+                import logging
+                logging.error(f"[LLMGateway] Key '{key_id}' failed: {e}")
                 fallback_attempts += 1
                 continue
 
